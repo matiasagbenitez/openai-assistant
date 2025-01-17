@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #1A1A1A; /* azul */
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #464646; /* gris claro */
+  }
+}
+
+html,
+body {
+  background-color: #1A1A1A;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+  @apply text-3xl font-bold mb-4;
+}
+
+p {
+  @apply mb-4;
+}
+
+ul {
+  @apply list-disc list-inside;
+}
+
+strong {
+  @apply font-bold text-indigo-400;
+}
+
+em {
+  @apply italic text-pink-500;
+}
+
+.btn-primary {
+  @apply bg-zinc-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-zinc-800 transition-all duration-200 ease-in-out;
+}
+
+.btn-primary:disabled {
+  @apply bg-zinc-500 text-white font-bold py-2 px-4 rounded-xl opacity-50 cursor-not-allowed;
+}
+
+.chat-container {
+  @apply flex flex-col flex-auto flex-shrink-0 bg-white bg-opacity-5 h-full p-8 rounded-xl;
+}
+
+.chat-messages {
+  @apply flex flex-col h-full overflow-x-auto mb-4 overflow-scroll ;
+}
+
+.section-container {
+  /* @apply bg-white bg-opacity-5 p-8; */
+  @apply p-8;
+}
+
+/* Animations */
+
+.fade-in {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
