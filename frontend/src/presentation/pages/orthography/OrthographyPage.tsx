@@ -1,29 +1,39 @@
 import { useState } from "react";
 import {
-  GptMessage,
+  GptOrthographyMessage,
   MyMessage,
   TextMessageBox,
   TypingLoader,
 } from "../../../presentation/components";
+import { orthographyUseCase } from "../../../core/use-cases";
+import { OrthographyResponse } from "../../../interfaces";
 
 interface Message {
   text: string;
   isGpt: boolean;
+  info?: OrthographyResponse;
 }
 
 export const OrthographyPage = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const handlePost = async (message: string) => {
+  const handlePost = async (prompt: string) => {
     setLoading(true);
-    setMessages((prev) => [...prev, { text: message, isGpt: false }]);
-
-    // TODO: use-case
-
+    setMessages((prev) => [...prev, { text: prompt, isGpt: false }]);
+    const data = await orthographyUseCase(prompt);
+    if (data.error) {
+      setMessages((prev) => [
+        ...prev,
+        { text: "No se pudo realizar la corrección", isGpt: true },
+      ]);
+    } else {
+      setMessages((prev) => [
+        ...prev,
+        { text: data.message, isGpt: true, info: data },
+      ]);
+    }
     setLoading(false);
-
-    // TODO: añadir el mensaje de isGpt: true
   };
 
   return (
@@ -32,7 +42,7 @@ export const OrthographyPage = () => {
         <div className="grid grid-cols-12 gap-y-2">
           {messages.map((message, index) => {
             if (message.isGpt) {
-              return <GptMessage key={index} text={message.text} />;
+              return <GptOrthographyMessage key={index} data={message.info!} />;
             } else {
               return <MyMessage key={index} text={message.text} />;
             }
