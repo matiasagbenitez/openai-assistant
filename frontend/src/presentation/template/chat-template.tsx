@@ -28,7 +28,7 @@ export const ChatTemplate = () => {
 
   return (
     <div className="chat-container">
-      <div className="chat-messages">
+      <div className="chat-messages custom-scrollbar">
         <div className="grid grid-cols-12 gap-y-2">
           {/* Bienvenida */}
 
