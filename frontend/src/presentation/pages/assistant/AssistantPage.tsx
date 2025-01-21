@@ -22,6 +22,23 @@ export const AssistantPage = () => {
   const [threadId, setThreadId] = useState<string>();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Referencia al final del contenedor de mensajes
 
+  const [recentThreads, setRecentThreads] = useState<string[]>([]); // Almacena los últimos 5 threadId
+
+  useEffect(() => {
+    const threadId = localStorage.getItem("threadId");
+    const savedThreads = JSON.parse(
+      localStorage.getItem("recentThreads") || "[]"
+    );
+    setRecentThreads(savedThreads);
+
+    if (threadId) {
+      setThreadId(threadId);
+      handleReload(threadId);
+    } else {
+      handleNewThread();
+    }
+  }, []);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -33,26 +50,23 @@ export const AssistantPage = () => {
   };
 
   // Obtener el threadId, si no existe crear uno
-  useEffect(() => {
-    const threadId = localStorage.getItem("threadId");
-    if (threadId) {
-      setThreadId(threadId);
-      if (messages.length === 0) {
-        handleReload(threadId);
-      }
-    } else {
-      handleNewThread();
-    }
-  }, [messages.length]);
+  // useEffect(() => {
+  //   const threadId = localStorage.getItem("threadId");
+  //   if (threadId) {
+  //     setThreadId(threadId);
+  //     if (messages.length === 0) {
+  //       handleReload(threadId);
+  //     }
+  //   } else {
+  //     handleNewThread();
+  //   }
+  // }, [messages.length]);
 
   const handlePost = async (text: string) => {
     if (!threadId) return;
     setLoading(true);
 
-    setMessages((prev) => [
-      ...prev,
-      { text, isGpt: false },
-    ]);
+    setMessages((prev) => [...prev, { text, isGpt: false }]);
 
     const replies = await postQuestionUseCase(threadId, text);
 
@@ -74,7 +88,7 @@ export const AssistantPage = () => {
     const replies = await reloadThreadUseCase(id);
     if (!replies) return;
     setLoading(false);
-  
+
     const newMessages = replies.flatMap((reply) =>
       reply.content.map((message) => ({
         text: message,
@@ -82,7 +96,7 @@ export const AssistantPage = () => {
         info: reply,
       }))
     );
-  
+
     handleAddMessages(newMessages);
   };
 
@@ -90,8 +104,37 @@ export const AssistantPage = () => {
     const id = await createThreadUseCase();
     if (!id) return;
     setThreadId(id);
-    localStorage.setItem("threadId", id);
+    saveThreadIdToLocalStorage(id);
+    // localStorage.setItem("threadId", id);
     setMessages([]);
+  };
+
+  const handleSelectThread = async (id: string) => {
+    if (!id) return;
+    setThreadId(id);
+    saveThreadIdToLocalStorage(id);
+    setMessages([]);
+    handleReload(id);
+  };
+
+  // Guardar el threadId en el localStorage y mantener los últimos 5
+  const saveThreadIdToLocalStorage = (id: string) => {
+    // Si el threadId ya está en la lista, no hacemos nada
+    if (recentThreads.includes(id)) {
+      setThreadId(id);
+      localStorage.setItem("threadId", id);
+      return;
+    }
+
+    // Si hay menos de 5 threadId en la lista, lo agregamos
+    if (recentThreads.length < 5) {
+      const updatedThreads = [id, ...recentThreads];
+      setRecentThreads(updatedThreads);
+      localStorage.setItem("recentThreads", JSON.stringify(updatedThreads));
+    }
+
+    // Guardar siempre el último threadId activo
+    localStorage.setItem("threadId", id);
   };
 
   const handleAddMessages = (newMessages: Message[]) => {
@@ -103,7 +146,16 @@ export const AssistantPage = () => {
       return [...prev, ...uniqueMessages];
     });
   };
-  
+
+  const handleDeleteThread = (id: string) => {
+    if (!id) return;
+    const updatedThreads = recentThreads.filter((threadId) => threadId !== id);
+    setRecentThreads(updatedThreads);
+    localStorage.setItem("recentThreads", JSON.stringify(updatedThreads));
+    localStorage.removeItem("threadId");
+    setThreadId(undefined);
+    setMessages([]);
+  };
 
   return (
     <div className="chat-container">
@@ -111,10 +163,37 @@ export const AssistantPage = () => {
         <h4 className="font-bold text-lg">
           Bienvenido al asistente virtual de SAM, ¿en qué puedo ayudarte? 🤖
         </h4>
-        <button className="btn btn-primary text-sm" onClick={handleNewThread}>
-          <i className="fas fa-plus mr-2"></i>
-          Nuevo hilo
-        </button>
+        <select
+          className="bg-white text-black text-sm p-2 rounded-md"
+          value={threadId || ""}
+          onChange={(e) => handleSelectThread(e.target.value)}
+        >
+          <option value="" disabled>
+            Restaurar hilo
+          </option>
+          {recentThreads.map((id) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+        </select>
+        <div className="flex gap-x-2">
+          <button
+            className="btn btn-primary text-sm"
+            onClick={handleNewThread}
+            title="Nuevo hilo de conversación"
+          >
+            <i className="fas fa-plus mr-2"></i>
+            Nuevo hilo
+          </button>
+          <button
+            title="Eliminar hilo"
+            className="btn btn-primary text-sm text-red-300 hover:text-red-500"
+            onClick={() => handleDeleteThread(threadId || "")}
+          >
+            <i className="fas fa-trash  "></i>
+          </button>
+        </div>
       </div>
       <div className="chat-messages custom-scrollbar">
         <div className="grid grid-cols-12 gap-y-2">
@@ -129,7 +208,7 @@ export const AssistantPage = () => {
           })}
 
           {loading && <TypingLoader />}
-        
+
           <div ref={messagesEndRef} />
         </div>
       </div>
