@@ -1,5 +1,6 @@
 
 export { GptMessage } from './chat-bubbles/GptMessage';
+export { GptAudioMessage } from './chat-bubbles/GptAudioMessage';
 export { GptOrthographyMessage } from './chat-bubbles/GptOrthographyMessage';
 export { MyMessage } from './chat-bubbles/MyMessage';
 

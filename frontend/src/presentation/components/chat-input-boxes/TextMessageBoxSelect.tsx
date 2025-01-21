@@ -32,7 +32,7 @@ export const TextMessageBoxSelect = ({
   return (
     <form
       onSubmit={handleSendMessage}
-      className="flex items-center justify-between h-16 rounded-xl w-full p-2  bg-white bg-opacity-10"
+      className="flex items-center justify-between h-16 rounded-xl w-full p-2 bg-white bg-opacity-10"
     >
       <div className="flex-grow">
         <div className="flex">
@@ -42,7 +42,8 @@ export const TextMessageBoxSelect = ({
             name="message"
             className="w-full rounded-xl text-gray-200 border-0 pl-4 h-10 bg-transparent focus:outline-none"
             placeholder={placeholder || "Escribe un mensaje..."}
-            autoComplete={disableCorrections ? "on" : "off"}
+            // autoComplete={disableCorrections ? "on" : "off"}
+            autoComplete="off"
             autoCorrect={disableCorrections ? "on" : "off"}
             spellCheck={disableCorrections ? false : true}
             value={message}
