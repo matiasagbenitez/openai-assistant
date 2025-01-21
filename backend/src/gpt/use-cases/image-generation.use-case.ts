@@ -42,7 +42,7 @@ export const imageGenerationUseCase = async (openai: OpenAI, options: Options) =
         prompt,
         image: fs.createReadStream(pngImagePath),
         mask: fs.createReadStream(maskPngImagePath),
-        model: "dall-e-3",
+        model: 'dall-e-2',
         size: '1024x1024',
         n: 1,
         response_format: 'url',

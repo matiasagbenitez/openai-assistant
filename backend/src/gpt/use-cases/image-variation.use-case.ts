@@ -1,7 +1,6 @@
 import * as fs from "fs";
-import * as path from "path";
 import OpenAI from "openai";
-import { downloadBase64ImageAsPng, saveImageAsPng } from "src/helpers";
+import { saveImageAsPng } from "src/helpers";
 
 interface Options {
     baseImage: string;

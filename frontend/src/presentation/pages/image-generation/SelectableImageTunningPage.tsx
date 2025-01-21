@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import {
-  GptImageMessage,
+  GptSelectableImageMessage,
   MyMessage,
   TextMessageBox,
   TypingLoader,
@@ -24,7 +24,7 @@ interface OriginalImageAndMask {
   mask: string | undefined;
 }
 
-export const ImageTunningPage = () => {
+export const SelectableImageTunningPage = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [originalImageAndMask, setOriginalImageAndMask] =
@@ -55,11 +55,13 @@ export const ImageTunningPage = () => {
     ]);
   };
 
-  const handlePost = async (text: string) => {
+  const handlePost = async (message: string) => {
     setLoading(true);
-    setMessages((prev) => [...prev, { text, isGpt: false }]);
+    setMessages((prev) => [...prev, { text: message, isGpt: false }]);
 
-    const imageInfo = await imageGenerationUseCase(text);
+    const { original, mask } = originalImageAndMask;
+
+    const imageInfo = await imageGenerationUseCase(message, original, mask);
     setLoading(false);
 
     if (!imageInfo) {
@@ -86,7 +88,7 @@ export const ImageTunningPage = () => {
         <div className="fixed flex flex-col items-center top-10 right-10 z-10 fade-in">
           <div className="relative">
             <img
-              src={originalImageAndMask.original}
+              src={originalImageAndMask.mask || originalImageAndMask.original}
               alt="Original"
               className="w-40 h-40 object-contain rounded-xl"
             />
@@ -119,15 +121,15 @@ export const ImageTunningPage = () => {
             {messages.map(({ isGpt, text, info }, index) => {
               if (isGpt && info) {
                 return (
-                  <GptImageMessage
+                  <GptSelectableImageMessage
                     key={index}
                     url={info.url}
                     alt={info.alt}
-                    onImageSelected={(imageUrl) =>
-                      setOriginalImageAndMask(() => ({
-                        original: imageUrl,
-                        mask: undefined,
-                      }))
+                    onImageSelected={(maskImageUrl) =>
+                      setOriginalImageAndMask({
+                        original: info.url,
+                        mask: maskImageUrl,
+                      })
                     }
                   />
                 );

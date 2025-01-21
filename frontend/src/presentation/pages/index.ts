@@ -2,6 +2,7 @@ export * from "./assistant/AssistantPage";
 export * from "./audio-to-text/AudioToTextPage";
 export * from "./image-generation/ImageGenerationPage";
 export * from "./image-generation/ImageTunningPage";
+export * from "./image-generation/SelectableImageTunningPage";
 export * from "./orthography/OrthographyPage";
 export * from "./pros-cons-stream/ProsConsStreamPage";
 export * from "./pros-cons/ProsConsPage";

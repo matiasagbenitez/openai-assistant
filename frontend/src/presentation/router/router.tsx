@@ -7,6 +7,7 @@ import {
   OrthographyPage,
   ProsConsPage,
   ProsConsStreamPage,
+  SelectableImageTunningPage,
   TextToAudioPage,
   TranslatePage,
 } from "../pages";
@@ -61,6 +62,13 @@ export const menuRoutes = [
     title: "Editar imagen",
     description: "Generación continua",
     component: <ImageTunningPage />,
+  },
+  {
+    to: "/image-tunning-selectable",
+    icon: "fa-solid fa-wand-magic-sparkles",
+    title: "Editar imagen seleccionable",
+    description: "Generación continua con selección",
+    component: <SelectableImageTunningPage />,
   },
   {
     to: "/audio-to-text",
