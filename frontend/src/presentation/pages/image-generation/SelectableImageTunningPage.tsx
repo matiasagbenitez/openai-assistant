@@ -1,5 +1,6 @@
 import { Fragment, useState } from "react";
 import {
+  GptMessage,
   GptSelectableImageMessage,
   MyMessage,
   TextMessageBox,
@@ -117,6 +118,8 @@ export const SelectableImageTunningPage = () => {
         <div className="chat-messages custom-scrollbar">
           <div className="grid grid-cols-12 gap-y-2">
             {/* Bienvenida */}
+
+            <GptMessage text="¡Hola! Soy tu asistente de edición de imágenes. Puedo ayudarte a generar una imagen a partir de un texto y luego editarla. ¿Qué imagen deseas generar?" />
 
             {messages.map(({ isGpt, text, info }, index) => {
               if (isGpt && info) {

@@ -16,7 +16,6 @@ interface Message {
 }
 
 export const ProsConsStreamPage = () => {
-
   const abortController = useRef(new AbortController());
   const isRunning = useRef(false);
 
@@ -24,7 +23,6 @@ export const ProsConsStreamPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handlePost = async (prompt: string) => {
-
     if (isRunning.current) {
       abortController.current.abort();
       abortController.current = new AbortController();
@@ -34,28 +32,11 @@ export const ProsConsStreamPage = () => {
     isRunning.current = true;
     setMessages((prev) => [...prev, { text: prompt, isGpt: false }]);
 
-    // ! SIN FUNCIÓN GENERADORA
-    // const reader = await prosConsStreamUseCase(prompt);
-    // if (!reader) return;
-    // setLoading(false);
-
-    // const decoder = new TextDecoder();
-    // let content = "";
-    // setMessages((prev) => [...prev, { text: content, isGpt: true }]);
-
-    // while (true) {
-    //   const { done, value } = await reader.read();
-    //   if (done) break;
-    //   content += decoder.decode(value, { stream: true });
-    //   setMessages((prev) => {
-    //     const newMessages = [...prev];
-    //     newMessages[newMessages.length - 1].text = content;
-    //     return newMessages;
-    //   });
-    // }
-
     // ! CON FUNCIÓN GENERADORA
-    const stream = prosConsStreamGeneratorUseCase(prompt, abortController.current.signal);
+    const stream = prosConsStreamGeneratorUseCase(
+      prompt,
+      abortController.current.signal
+    );
     setLoading(false);
     setMessages((prev) => [...prev, { text: "", isGpt: true }]);
     for await (const message of stream) {
@@ -74,7 +55,7 @@ export const ProsConsStreamPage = () => {
       <div className="chat-messages custom-scrollbar">
         <div className="grid grid-cols-12 gap-y-2">
           {/* Bienvenida */}
-
+          <GptMessage text="¡Hola! Soy tu asistente de pros y contras. Puedo ayudarte a analizar los pros y contras de un tema en específico respondiendo como stream. ¿Qué tema deseas analizar hoy?" />
           {messages.map((message, index) => {
             if (message.isGpt) {
               return <GptMessage key={index} text={message.text} />;

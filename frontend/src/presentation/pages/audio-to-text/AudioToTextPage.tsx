@@ -35,6 +35,8 @@ export const AudioToTextPage = () => {
         <div className="grid grid-cols-12 gap-y-2">
           {/* Bienvenida */}
 
+          <GptMessage text="¡Hola! Soy tu asistente de audio a texto. Puedo ayudarte a transcribir un archivo de audio a texto. ¿Qué archivo deseas transcribir?" />
+
           {messages.map((message, index) => {
             if (message.isGpt) {
               return <GptMessage key={index} text={message.text} />;

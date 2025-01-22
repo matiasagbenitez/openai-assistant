@@ -49,7 +49,7 @@ export const TranslatePage = () => {
       <div className="chat-messages custom-scrollbar">
         <div className="grid grid-cols-12 gap-y-2">
           {/* Bienvenida */}
-
+          <GptMessage text="¡Hola! Soy tu asistente de traducción. Puedo ayudarte a traducir un texto a diferentes idiomas. ¿Qué texto deseas traducir?" />
           {messages.map((message, index) => {
             if (message.isGpt) {
               return <GptMessage key={index} text={message.text} />;

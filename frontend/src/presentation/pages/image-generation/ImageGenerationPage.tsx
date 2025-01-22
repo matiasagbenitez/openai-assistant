@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   GptImageMessage,
+  GptMessage,
   MyMessage,
   TextMessageBox,
   TypingLoader,
@@ -51,6 +52,7 @@ export const ImageGenerationPage = () => {
         <div className="grid grid-cols-12 gap-y-2">
           {/* Bienvenida */}
 
+          <GptMessage text="¡Hola! Soy tu asistente de generación de imágenes. Puedo ayudarte a generar una imagen a partir de un texto. ¿Qué imagen deseas generar?" />
           {messages.map(({ isGpt, text, info }, index) => {
             if (isGpt && info) {
               return (

@@ -11,3 +11,4 @@ export * from './image-variation.use-case';
 export * from './assistant/create-thread.use-case';
 export * from './assistant/post-question.use-case';
 export * from './assistant/reload-thread.use-case';
+export * from './assistant/assistant-stream-generator.use-case';

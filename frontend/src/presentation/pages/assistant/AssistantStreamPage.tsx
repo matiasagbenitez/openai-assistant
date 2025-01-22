@@ -6,8 +6,8 @@ import {
   TypingLoader,
 } from "../../components";
 import {
+  assistantStreamGeneratorUseCase,
   createThreadUseCase,
-  postQuestionUseCase,
   reloadThreadUseCase,
 } from "../../../core/use-cases";
 
@@ -16,13 +16,16 @@ interface Message {
   isGpt: boolean;
 }
 
-export const AssistantPage = () => {
+export const AssistantStreamPage = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [threadId, setThreadId] = useState<string>();
   const messagesEndRef = useRef<HTMLDivElement>(null); // Referencia al final del contenedor de mensajes
 
   const [recentThreads, setRecentThreads] = useState<string[]>([]); // Almacena los últimos 5 threadId
+
+  const abortController = useRef(new AbortController());
+  const isRunning = useRef(false);
 
   useEffect(() => {
     const threadId = localStorage.getItem("threadId");
@@ -49,37 +52,32 @@ export const AssistantPage = () => {
     }
   };
 
-  // Obtener el threadId, si no existe crear uno
-  // useEffect(() => {
-  //   const threadId = localStorage.getItem("threadId");
-  //   if (threadId) {
-  //     setThreadId(threadId);
-  //     if (messages.length === 0) {
-  //       handleReload(threadId);
-  //     }
-  //   } else {
-  //     handleNewThread();
-  //   }
-  // }, [messages.length]);
-
   const handlePost = async (text: string) => {
     if (!threadId) return;
+    if (isRunning.current) {
+      abortController.current.abort();
+      abortController.current = new AbortController();
+    }
+
     setLoading(true);
-
     setMessages((prev) => [...prev, { text, isGpt: false }]);
-
-    const replies = await postQuestionUseCase(threadId, text);
-
+    const stream = assistantStreamGeneratorUseCase(
+      threadId,
+      text,
+      abortController.current.signal
+    );
     setLoading(false);
 
-    for (const reply of replies) {
-      for (const message of reply.content) {
-        setMessages((prev) => [
-          ...prev,
-          { text: message, isGpt: reply.role === "assistant", info: reply },
-        ]);
-      }
+    setMessages((prev) => [...prev, { text: "", isGpt: true }]);
+    for await (const message of stream) {
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        newMessages[newMessages.length - 1].text = message;
+        return newMessages;
+      });
     }
+
+    isRunning.current = true;
   };
 
   const handleReload = async (id: string) => {

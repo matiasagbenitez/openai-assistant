@@ -1,4 +1,5 @@
 export * from "./assistant/AssistantPage";
+export * from "./assistant/AssistantStreamPage";
 export * from "./audio-to-text/AudioToTextPage";
 export * from "./image-generation/ImageGenerationPage";
 export * from "./image-generation/ImageTunningPage";

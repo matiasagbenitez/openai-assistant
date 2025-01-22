@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  GptMessage,
   GptOrthographyMessage,
   MyMessage,
   TextMessageBox,
@@ -40,6 +41,8 @@ export const OrthographyPage = () => {
     <div className="chat-container">
       <div className="chat-messages custom-scrollbar">
         <div className="grid grid-cols-12 gap-y-2">
+          <GptMessage text="¡Hola! Soy tu asistente de ortografía. Puedo ayudarte a corregir tus textos. ¿Qué deseas corregir hoy?" />
+
           {messages.map((message, index) => {
             if (message.isGpt) {
               return <GptOrthographyMessage key={index} data={message.info!} />;
