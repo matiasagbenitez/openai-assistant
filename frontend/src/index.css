@@ -31,7 +31,11 @@ p {
 }
 
 ul {
-  @apply list-disc list-inside;
+  @apply list-disc list-inside mb-3;
+}
+
+li {
+  @apply my-1;
 }
 
 strong {

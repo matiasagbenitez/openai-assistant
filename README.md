@@ -1,9 +1,3 @@
-<div style="display: flex; justify-content: space-around; align-items: center;">
-<img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
-<img src="https://cdn.iconscout.com/icon/free/png-256/free-openai-logo-icon-download-in-svg-png-gif-file-formats--chatgpt-american-artificial-intelligence-research-laboratory-freebies-pack-logos-icons-6138535.png?f=webp&w=256" width="256" alt="OpenAI Logo" />
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png" width="130" height="120" alt="Vite Logo" />
-</div>
-
 # OpenAI Assistant
 
 ## Descripción
